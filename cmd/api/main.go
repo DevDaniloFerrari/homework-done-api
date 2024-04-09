@@ -2,21 +2,21 @@ package main
 
 import (
 	"github.com/DevDaniloFerrari/homeworke-done-api/internal/database"
+	"github.com/DevDaniloFerrari/homeworke-done-api/internal/http"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	connectionString := "postgresql://posts"
-	_, err := database.NewConnection(connectionString)
+	connectionString := "postgresql://postgres:1234@localhost:5432/homework"
+	conn, err := database.NewConnection(connectionString)
 	if err != nil {
 		panic(err)
 	}
 
+	defer conn.Close()
+
 	g := gin.Default()
-	g.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"message": "Hello World",
-		})
-	})
+	http.Configure()
+	http.SetRoutes(g)
 	g.Run(":4000")
 }
