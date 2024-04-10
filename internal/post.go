@@ -1,7 +1,7 @@
 package internal
 
 type TaskModel struct {
-	ID          int
-	Description string
-	IsDone      bool
+	ID          int    `json:"id"`
+	Description string `json:"description"`
+	IsDone      bool   `json:"isDone"`
 }

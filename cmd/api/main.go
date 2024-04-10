@@ -1,9 +1,13 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/DevDaniloFerrari/homeworke-done-api/internal/database"
-	"github.com/DevDaniloFerrari/homeworke-done-api/internal/http"
-	"github.com/gin-gonic/gin"
+	"github.com/DevDaniloFerrari/homeworke-done-api/internal/routes"
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -15,8 +19,20 @@ func main() {
 
 	defer conn.Close()
 
-	g := gin.Default()
-	http.Configure()
-	http.SetRoutes(g)
-	g.Run(":4000")
+	router := mux.NewRouter()
+
+	routes.Configure()
+	routes.SetRoutes(router)
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:8100"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(router)
+
+	errorServer := http.ListenAndServe(":8080", handler)
+	if errorServer != nil {
+		log.Fatalln("There's an error with the server,", errorServer)
+	}
 }

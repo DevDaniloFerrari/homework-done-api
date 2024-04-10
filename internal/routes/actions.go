@@ -1,6 +1,7 @@
-package http
+package routes
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/DevDaniloFerrari/homeworke-done-api/internal"
@@ -38,7 +39,8 @@ func PostTasks(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, nil)
 }
 
-func GetTasks(ctx *gin.Context) {
-	p := service.FindAll()
-	ctx.JSON(http.StatusOK, p)
+func GetTasks(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	tasks := service.FindAll()
+	json.NewEncoder(writer).Encode(&tasks)
 }
