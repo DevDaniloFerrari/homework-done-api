@@ -2,6 +2,7 @@ package task
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/DevDaniloFerrari/homeworke-done-api/internal"
@@ -24,6 +25,30 @@ func (r *Repository) Insert(task internal.TaskModel) error {
 	return err
 }
 
+func (r *Repository) Update(task internal.TaskModel) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	_, err := r.Conn.Exec(ctx,
+		"UPDATE tasks SET description = $1, isdone = $2 WHERE id = $3",
+		task.Description,
+		task.IsDone,
+		task.ID)
+
+	return err
+}
+
+func (r *Repository) Delete(taskID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	_, err := r.Conn.Exec(ctx,
+		"DELETE FROM public.tasks WHERE id = $1",
+		taskID)
+
+	return err
+}
+
 func (r *Repository) FindAll() []internal.TaskModel {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -31,8 +56,9 @@ func (r *Repository) FindAll() []internal.TaskModel {
 	var tasks []internal.TaskModel
 	rows, err := r.Conn.Query(
 		ctx,
-		"SELECT id, description, isdone FROM tasks;")
+		"SELECT id, description, isdone FROM public.tasks;")
 
+	fmt.Print(err)
 	if err != nil {
 		return nil
 	}

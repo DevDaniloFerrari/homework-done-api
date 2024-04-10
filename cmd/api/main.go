@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	connectionString := "postgresql://postgres:1234@localhost:5432/homework"
+	connectionString := ""
 	conn, err := database.NewConnection(connectionString)
 	if err != nil {
 		panic(err)
@@ -26,6 +26,7 @@ func main() {
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8100"},
+		AllowedMethods:   []string{"POST", "PUT", "GET", "DELETE", "OPTIONS"},
 		AllowCredentials: true,
 	})
 
